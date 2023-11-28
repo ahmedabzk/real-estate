@@ -100,14 +100,14 @@ pub async fn login(
                 // token: cookie
             };
 
-            let response = Response::builder()
-                .status(StatusCode::OK)
-                .header(axum::http::header::SET_COOKIE, cookie.as_str())
-                .body(Json(res))
-                .unwrap()
-                .into_body();
+            // let response = Response::builder()
+            //     .status(StatusCode::OK)
+            //     .header(axum::http::header::SET_COOKIE, cookie.as_str())
+            //     .body(Json(res))
+            //     .unwrap()
+            //     .into_body();
 
-            Ok(response)
+           Ok((headers, Json(res)))
         }
     } else {
         Err(MyError::UserDoesNotExist("User does not exist".to_string()))
