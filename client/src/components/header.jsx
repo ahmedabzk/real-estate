@@ -1,7 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export default function Header() {
+  const userState = useSelector((state) => state.user);
+
   return (
     <>
       <header className=" bg-slate-200 shadow-md">
@@ -18,11 +21,30 @@ export default function Header() {
             />
             <FaSearch className="text-slate-600" />
           </form>
-          <div className="flex gap-2">
-            <NavLink to="/" className="hidden sm:inline text-slate-700 hover:underline">Home</NavLink> 
-            <NavLink to="/about" className="hidden sm:inline text-slate-700 hover:underline">About</NavLink>
-            <NavLink to="/sign-in" className="text-slate-700 hover:underline">Signin</NavLink>
-          </div>
+          <ul className="flex gap-2">
+            <Link to="/">
+              <li className="hidden sm:inline text-slate-700 hover:underline">
+                Home
+              </li>
+            </Link>
+            <Link to="/about">
+              <li className="hidden sm:inline text-slate-700 hover:underline">
+                About
+              </li>
+            </Link>
+
+            <Link to="/profile">
+              {userState.currentUser ? (
+                <img
+                  className="rounded-full h-9 w-9 object-cover"
+                  src={userState.currentUser.avatar}
+                  alt="profile"
+                />
+              ) : (
+                <li className=" text-slate-700 hover:underline"> Sign in</li>
+              )}
+            </Link>
+          </ul>
         </div>
       </header>
     </>

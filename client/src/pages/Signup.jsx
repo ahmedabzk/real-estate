@@ -20,7 +20,7 @@ export default function Signup() {
     e.preventDefault();
     try {
       setIsLoading(true);
-       const res = await fetch("http://localhost:3000/auth/sign-up", {
+       const res = await fetch("http://localhost:3000/api/auth/sign-up", {
          method: "POST",
          headers: {
            "content-type": "application/json",
@@ -28,13 +28,14 @@ export default function Signup() {
          body: JSON.stringify(formData),
        });
       const data = await res.json();
-      if (data.status === "success") { 
+      if (data.success === false) { 
         setIsLoading(false);
-        setIsError(null);
-         navigate("/sign-in");
+        setIsError(data.message);
+         return;
       }
       setIsLoading(false);
-      setIsError(data.error);
+      setIsError(null);
+       navigate("/sign-in");
     } catch (error) {
       setIsError({ message: error.message || "failed to register user" })
     }
