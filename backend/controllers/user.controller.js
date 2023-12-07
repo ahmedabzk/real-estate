@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 
 import User from "../models/user.model.js";
+import Listing from "../models/listing.model.js";
 
 export const updateUser = async (req, res, next) => {
   if (req.user.id === req.params.id) {
@@ -43,4 +44,17 @@ export const deleteUser = async (req, res, next) => {
     }
   }
   return next(errorHandler(403, "you can only delete your own account"));
+};
+
+export const userListings = async (req, res, next) => {
+  if (req.user.id === req.params.id) {
+
+    try {
+      const listing = await Listing.find({ userRef: req.params.id});
+      res.status(200).json(listing);
+    } catch (err) {
+      next(err);
+    }
+  }
+  return next(errorHandler(401, "Log in to get your listing"));
 };

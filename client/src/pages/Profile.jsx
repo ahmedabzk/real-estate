@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
@@ -25,6 +25,11 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [listingsError, setListingsError] = useState('');
+  const [listingsloading, setListingsLoading] = useState(false);
+  const [listingsData, setListingsData] = useState([]);
+
+  console.log(listingsData);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -134,7 +139,32 @@ export default function Profile() {
 
   const handleListCreate = () => {
     navigate("/create-listing");
-  }
+  };
+
+
+  const handleShowListings = async () => {
+    try {
+      setListingsLoading(true);
+      const res = await fetch(
+        `http://localhost:3000/api/user/listings/${userState.currentUser._id}`,
+        {
+          credentials: 'include'
+        }
+      );
+      const data = await res.json();
+      if (data.success === false) {
+        setListingsError(data.message);
+        setListingsLoading(false);
+        return;
+      }
+      
+      setListingsData(data);
+      setListingsLoading(false);
+    } catch (err) {
+      setListingsError(err);
+      setListingsLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-lg mx-auto p-3 my-7">
@@ -195,7 +225,10 @@ export default function Profile() {
         >
           {userState.loading ? "Loading..." : "update"}
         </button>
-        <button onClick={handleListCreate} className="bg-green-700 text-white uppercase p-2 rounded-lg hover:opacity-95">
+        <button
+          onClick={handleListCreate}
+          className="bg-green-700 text-white uppercase p-2 rounded-lg hover:opacity-95"
+        >
           create listing
         </button>
       </form>
@@ -212,6 +245,47 @@ export default function Profile() {
       <p className="text-green-600 text-center">
         {updateSuccess ? "User updated successfully" : ""}
       </p>
+      <button
+        disabled={listingsloading}
+        onClick={handleShowListings}
+        className="text-green-700 uppercase p-2 rounded-lg hover:opacity-95 hover:underline w-full"
+      >
+        {listingsloading ? "Loading..." : "show listings"}
+      </button>
+
+      {listingsData ? (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-center text-2xl font-semibold mt-7">
+            Your listings
+          </h1>
+          {listingsData.map((listing) => (
+            <div
+              key={listing._id}
+              className="flex flex-row p-3 border justify-between items-center gap-3"
+            >
+              <Link
+                to={`listing/${listing._id}`}
+                className="w-20 h-20 object-contain"
+              >
+                <img src={listing.imageUrl[0]} />
+              </Link>
+              <Link
+                to={`listing/${listing._id}`}
+                className="font-semibold flex-1 hover:underline"
+              >
+                <p>{listing.name}</p>
+              </Link>
+
+              <div className="flex flex-col items-center">
+                <button className="text-red-700 uppercase">delete</button>
+                <button className="text-green-700 uppercase">edit</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>You dont have listings</p>
+      )}
     </div>
   );
 }
