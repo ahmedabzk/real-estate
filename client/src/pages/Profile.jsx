@@ -28,6 +28,8 @@ export default function Profile() {
   const [listingsError, setListingsError] = useState('');
   const [listingsloading, setListingsLoading] = useState(false);
   const [listingsData, setListingsData] = useState([]);
+  const [deleteListingSuccess, setDeleteListingSuccess] = useState(false);
+
 
   console.log(listingsData);
 
@@ -142,6 +144,7 @@ export default function Profile() {
   };
 
 
+  
   const handleShowListings = async () => {
     try {
       setListingsLoading(true);
@@ -163,6 +166,29 @@ export default function Profile() {
     } catch (err) {
       setListingsError(err);
       setListingsLoading(false);
+    }
+  };
+
+  const handleDeleteListing = async (listingId) => {
+    try {
+      setListingsError('');
+      const res = await fetch(
+        `http://localhost:3000/api/listing/delete/${listingId}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      );
+
+      const data = await res.json();
+      if (data.success === false) {
+        setListingsError(data.message);
+        setDeleteListingSuccess(false);
+        return;
+      }
+      setDeleteListingSuccess(true);
+    } catch (err) {
+      setListingsError(err.message);
     }
   };
 
@@ -252,8 +278,9 @@ export default function Profile() {
       >
         {listingsloading ? "Loading..." : "show listings"}
       </button>
+      {listingsError && <p className="text-red text-xl">{listingsError}</p>}
 
-      {listingsData ? (
+      {listingsData && listingsData.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="text-center text-2xl font-semibold mt-7">
             Your listings
@@ -277,14 +304,25 @@ export default function Profile() {
               </Link>
 
               <div className="flex flex-col items-center">
-                <button className="text-red-700 uppercase">delete</button>
-                <button className="text-green-700 uppercase">edit</button>
+                <button
+                  onClick={() => handleDeleteListing(listing._id)}
+                  className="text-red-700 uppercase"
+                >
+                  delete
+                </button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-700 uppercase">edit</button>
+                </Link>
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <p>You dont have listings</p>
+      )}
+
+      {deleteListingSuccess && (
+        <p className="text-green-700 text-xl font-medium text-center">
+          deleted listing successfully
+        </p>
       )}
     </div>
   );

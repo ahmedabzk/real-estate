@@ -58,3 +58,4 @@ export const userListings = async (req, res, next) => {
   }
   return next(errorHandler(401, "Log in to get your listing"));
 };
+
