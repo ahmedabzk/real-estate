@@ -35,7 +35,8 @@ export default function CreateListing() {
   const [createLoading, setCreateLoading] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(false);
 
-  console.log(formData);
+  
+  
   
   const handleUpload = () => {
    
@@ -56,7 +57,7 @@ export default function CreateListing() {
         setLoading(false);
         setUploadError(false);
       }).catch((err) => {
-        setImageUploadError('image upload failed');
+        setImageUploadError(err);
         setLoading(false);
       });
     } else {
@@ -148,7 +149,7 @@ export default function CreateListing() {
       }
       setCreateSuccess(true);
       setCreateLoading(false);
-      navigate(`listing/${data._id}`);
+      navigate(`/listing/${data._id}`);
     } catch (err) {
       setError(err.message);
     }

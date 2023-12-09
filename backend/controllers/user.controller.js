@@ -59,3 +59,16 @@ export const userListings = async (req, res, next) => {
   return next(errorHandler(401, "Log in to get your listing"));
 };
 
+export const getUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(errorHandler(401, "User not found"));
+  }
+
+  try {
+    res.status(200).json(user);
+  } catch (err) {
+    next(err);
+  }
+}

@@ -5,4 +5,6 @@ export { default as About } from './About.jsx';
 export { default as Home } from './Home.jsx';
 export { default as Profile } from './Profile.jsx';
 export { default as CreateListing } from './CreateListing.jsx';
-export { default as UpdateListing} from './UpdateListing.jsx';
+export { default as UpdateListing } from './UpdateListing.jsx';
+export { default as Listings } from './Listings.jsx';
+export {default as Search } from './Search.jsx';
