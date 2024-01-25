@@ -20,7 +20,7 @@ export default function Listings() {
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
   
-
+  SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
